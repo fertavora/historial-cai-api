@@ -1,0 +1,25 @@
+{
+  "name": "historial-cai-api",
+  "version": "1.0.0",
+  "description": "REST API para el historial de partidos de CAI",
+  "main": "api.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fertavora/historial-cai-api.git"
+  },
+  "author": "Fernando Tavora",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fertavora/historial-cai-api/issues"
+  },
+  "homepage": "https://github.com/fertavora/historial-cai-api#readme",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "mysql": "^2.10.2",
+    "winston": "^2.2.0"
+  }
+}
