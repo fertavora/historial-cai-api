@@ -1,3 +1,2 @@
 /.idea
-/node_modules
-/log/historico-cai.log
+api.log
