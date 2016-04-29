@@ -56,7 +56,6 @@ app.use(bodyParser.json()); // for parsing application/json
 databaseConnect();
 
 
-
 app.get('/api/arbitros', function(req, res){
 
   if(req.query.id){
@@ -91,5 +90,8 @@ app.get('/api/tecnicos', function(req, res){
   }
 });
 
+app.get('/', function(req, res){
+  res.status(200).send("Hello Galaxy!");
+});
 
 var server = app.listen(app_port);
