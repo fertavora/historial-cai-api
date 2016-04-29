@@ -94,4 +94,4 @@ app.get('/', function(req, res){
   res.status(200).send("Hello Galaxy!");
 });
 
-var server = app.listen(app_port);
+var server = app.listen(process.env.PORT || app_port);
