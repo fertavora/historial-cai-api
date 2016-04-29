@@ -22,7 +22,7 @@ var logger =  new (winston.Logger)({
             }
         }),
         new winston.transports.File({
-            filename: __dirname + '/log/historico-cai.log',
+            filename: __dirname + '/api.log',
             json: false,
             timestamp: function(){
                 var d = new Date(Date.now());
@@ -55,7 +55,7 @@ var logger =  new (winston.Logger)({
             }
         }),
         new winston.transports.File({
-            filename: __dirname + '/log/errors.log',
+            filename: __dirname + '/api-errors.log',
             json: false,
             timestamp: function(){
                 var d = new Date(Date.now());
