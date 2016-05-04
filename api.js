@@ -69,6 +69,55 @@ var logRows = function(rows){
   logger.info("DB Rows: " + rows);
 }
 
+var buildQuery = function(req, res, connection, table_name){
+  var query = "SELECT * FROM "+table_name;
+  if (Object.getOwnPropertyNames(req.query).length > 0) {
+
+    var params = Object.getOwnPropertyNames(req.query).length;
+    var count = 0;
+    var limit = 0;
+    for (var propName in req.query) {
+      if (typeof req.query[propName] == "string") {
+        if (propName !== "limit") {
+          switch (true) {
+            case (query.indexOf("WHERE") == -1 && params == 1):
+              query = query + " WHERE " + propName + "=" + req.query[propName];
+              break;
+            case (query.indexOf("WHERE") == -1 && params > 1):
+              query = query + " WHERE " + propName + "=" + req.query[propName] + " AND ";
+              break;
+            case (count == params - 1 && query.indexOf("AND") !== -1):
+              query = query + propName + "=" + req.query[propName];
+              break;
+            case (count > 0 && count <= params - 1 && query.indexOf("AND") == -1):
+              query = query + " AND " + propName + "=" + req.query[propName];
+              break;
+            case (count > 0 && count <= params - 1 && query.indexOf("AND") !== -1):
+              query = query + propName + "=" + req.query[propName];
+              break;
+          }
+        } else {
+          limit = req.query[propName];
+        }
+        count++;
+      } else {
+        res.status(400).send("there is more than one " + propName + " param!");
+        return;
+      }
+    }
+    if (limit > 0) {
+      query = query + " LIMIT " + limit;
+    }
+    query = query + ";";
+  } else {
+    query = query + ";"; //Si decidimos poner un limit por default, va acá -> query = query + " LIMIT 100;"
+  }
+  connection.query(query, function (err, rows) {
+    logQuery(query);
+    apiCallback(err, rows, res);
+  });
+}
+
 app.use(bodyParser.json()); // for parsing application/json
 databaseConnect();
 
@@ -114,52 +163,43 @@ app.post('', function(req, res){
 
 app.get('/api/partidos', function(req, res){
   if(checkHeader(req, res, expUserAgent)) {
-    var query = "SELECT * FROM partidos_detalle";
-    if (Object.getOwnPropertyNames(req.query).length > 0) {
+    buildQuery(req, res, connection, "partidos_detalle");
+  }
+});
 
-      var params = Object.getOwnPropertyNames(req.query).length;
-      var count = 0;
-      var limit = 0;
-      for (var propName in req.query) {
-        if (typeof req.query[propName] == "string") {
-          if (propName !== "limit") {
-            switch (true) {
-              case (query.indexOf("WHERE") == -1 && params == 1):
-                query = query + " WHERE " + propName + "=" + req.query[propName];
-                break;
-              case (query.indexOf("WHERE") == -1 && params > 1):
-                query = query + " WHERE " + propName + "=" + req.query[propName] + " AND ";
-                break;
-              case (count == params - 1 && query.indexOf("AND") !== -1):
-                query = query + propName + "=" + req.query[propName];
-                break;
-              case (count > 0 && count <= params - 1 && query.indexOf("AND") == -1):
-                query = query + " AND " + propName + "=" + req.query[propName];
-                break;
-              case (count > 0 && count <= params - 1 && query.indexOf("AND") !== -1):
-                query = query + propName + "=" + req.query[propName];
-                break;
-            }
-          } else {
-            limit = req.query[propName];
-          }
-          count++;
-        } else {
-          res.status(400).send("there is more than one " + propName + " param!");
-          return;
-        }
-      }
-      if (limit > 0) {
-        query = query + " LIMIT " + limit;
-      }
-      query = query + ";";
-    } else {
-      query = query + ";";
-    }
-    connection.query(query, function (err, rows) {
-      logQuery(query);
-      apiCallback(err, rows, res);
-    });
+app.get('/api/equipos', function(req, res){
+  if(checkHeader(req, res, expUserAgent)) {
+    buildQuery(req, res, connection, "equipos");
+  }
+});
+
+app.get('/api/torneos', function(req, res){
+  if(checkHeader(req, res, expUserAgent)) {
+    buildQuery(req, res, connection, "torneos");
+  }
+});
+
+app.get('/api/torneos-instancias', function(req, res){
+  if(checkHeader(req, res, expUserAgent)) {
+    buildQuery(req, res, connection, "torneos_instancias");
+  }
+});
+
+app.get('/api/paises', function(req, res){
+  if(checkHeader(req, res, expUserAgent)) {
+    buildQuery(req, res, connection, "paises");
+  }
+});
+
+app.get('/api/provincias', function(req, res){
+  if(checkHeader(req, res, expUserAgent)) {
+    buildQuery(req, res, connection, "provincias");
+  }
+});
+
+app.get('/api/ciudades', function(req, res){
+  if(checkHeader(req, res, expUserAgent)) {
+    buildQuery(req, res, connection, "ciudades");
   }
 });
 
