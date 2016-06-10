@@ -299,7 +299,30 @@ app.get('/api/partidos', function(req, res){
 });
 
 app.post('/api/equipos', function(req, res){
-  //todo query guardar equipos
+  connection.query("SELECT MAX(equipos_id) as id FROM equipos;", function(err, rows){
+    if(!err){
+      var toSave = {
+        equipos_id: rows[0].id+1,
+        equipos_nombre: req.body.nombre,
+        equipos_fecha: req.body.fecha,
+        equipos_estadio: req.body.estadio,
+        equipos_escudo: req.body.escudo,
+        ciudades_id: req.body.ciudad.ciudades_id,
+        provincia_id: req.body.provincia.provincia_id,
+        paises_id: req.body.pais.paises_id
+      }
+      
+      connection.query("INSERT INTO equipos SET ?", toSave, function(err){
+        if(!err) {
+          res.json("{'status': 'ok'}");
+        }else{
+          res.status(500).send(err);
+        }
+      })
+    }else{
+      res.status(500).send(err);
+    }
+  });
 })
 
 app.get('/api/equipos', function(req, res){
