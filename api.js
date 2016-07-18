@@ -9,9 +9,8 @@ var logger = require('./logger');
 var app = express();
 var connection;
 var app_port = 3001;
-var expUserAgent = "Bochini";
 var error400Message = "Access is restricted. Email fernando@tavora.com.ar for further information.";
-
+var expAuth = "Basic 7809caf6b7a050635bba9e72453bad47";
 var dbProd = {
   //base de godaddy
   // host     : 'historicocai.db.8518296.hostedresource.com',
@@ -62,9 +61,9 @@ var apiCallback = function (err, rows, res) {
 };
 
 var checkHeader = function(req, res, exp){
-  logger.info("Header Security-Pass: " + req.header('Security-Pass'));
-  if(req.header('Security-Pass') !== exp){
-    logger.error("Header error: Security-Pass is not valid!");
+  logger.info("Header Security-Pass: " + req.header('Authorization'));
+  if(req.header('Authorization') !== exp){
+    logger.error("Header error: Authorization is not valid!");
     res.status(400).send(error400Message);
     return false;
   }else{
@@ -184,7 +183,7 @@ app.post('/api/arbitros', function(req, res) {
 });
 
 app.get('/api/arbitros', function(req, res){
-  // if(checkHeader(req, res, expUserAgent)){
+  if(checkHeader(req, res, expAuth)){
     if(req.query.id){
       var query = "SELECT p.personas_id, p.personas_nombre, p.personas_apellido FROM personas as p INNER JOIN arbitros on p.personas_id = arbitros.personas_id WHERE p.personas_id = ? ORDER BY p.personas_apellido ASC;";
       connection.query(query, [req.query.id], function(err, rows){
@@ -198,7 +197,7 @@ app.get('/api/arbitros', function(req, res){
         apiCallback(err, rows, res);
       });
     }
-  // }
+  }
 });
 
 app.post('/api/tecnicos', function(req, res){
@@ -243,7 +242,7 @@ app.post('/api/tecnicos', function(req, res){
 });
 
 app.get('/api/tecnicos', function(req, res){
-  // if(checkHeader(req, res, expUserAgent)) {
+  if(checkHeader(req, res, expAuth)) {
     if (req.query.id) {
       var query = "SELECT p.personas_id, p.personas_nombre, p.personas_apellido, tecnicos.tecnicos_activo FROM personas as p INNER JOIN tecnicos on p.personas_id = tecnicos.personas_id WHERE p.personas_id = ? ORDER BY p.personas_apellido ASC;";
       connection.query(query, [req.query.id], function (err, rows) {
@@ -257,7 +256,7 @@ app.get('/api/tecnicos', function(req, res){
         apiCallback(err, rows, res);
       });
     }
-  // }
+  }
 });
 
 app.post('/api/partidos', function(req, res){
@@ -293,12 +292,13 @@ app.post('/api/partidos', function(req, res){
 });
 
 app.get('/api/partidos', function(req, res){
-  // if(checkHeader(req, res, expUserAgent)) {
+  if(checkHeader(req, res, expAuth)) {
     buildQuery(req, res, connection, "partidos_detalle");
-  // }
+  }
 });
 
 app.post('/api/equipos', function(req, res){
+  //7809caf6b7a050635bba9e72453bad47
   connection.query("SELECT MAX(equipos_id) as id FROM equipos;", function(err, rows){
     if(!err){
       var toSave = {
@@ -326,9 +326,9 @@ app.post('/api/equipos', function(req, res){
 })
 
 app.get('/api/equipos', function(req, res){
-  //if(checkHeader(req, res, expUserAgent)) {
+  if(checkHeader(req, res, expAuth)) {
     buildQuery(req, res, connection, "equipos");
- // }
+  }
 });
 
 app.post('/api/torneos', function(req, res){
@@ -355,9 +355,9 @@ app.post('/api/torneos', function(req, res){
 });
 
 app.get('/api/torneos', function(req, res){
-  // if(checkHeader(req, res, expUserAgent)) {
+  if(checkHeader(req, res, expAuth)) {
     buildQuery(req, res, connection, "torneos");
-  // }
+  }
 });
 
 app.post('/api/torneos-instancias', function(req, res){
@@ -386,27 +386,27 @@ app.post('/api/torneos-instancias', function(req, res){
 });
 
 app.get('/api/torneos-instancias', function(req, res){
-  // if(checkHeader(req, res, expUserAgent)) {
+  if(checkHeader(req, res, expAuth)) {
     buildQuery(req, res, connection, "torneos_instancias");
-  // }
+  }
 });
 
 app.get('/api/paises', function(req, res){
-  // if(checkHeader(req, res, expUserAgent)) {
+  if(checkHeader(req, res, expAuth)) {
     buildQuery(req, res, connection, "paises");
-  // }
+  }
 });
 
 app.get('/api/provincias', function(req, res){
-  // if(checkHeader(req, res, expUserAgent)) {
+  if(checkHeader(req, res, expAuth)) {
     buildQuery(req, res, connection, "provincias");
-  // }
+  }
 });
 
 app.get('/api/ciudades', function(req, res){
-  // if(checkHeader(req, res, expUserAgent)) {
+  if(checkHeader(req, res, expAuth)) {
     buildQuery(req, res, connection, "ciudades");
-  // }
+  }
 });
 
 var server = app.listen(process.env.PORT || app_port); //process.env.PORT is to have the app working on heroku

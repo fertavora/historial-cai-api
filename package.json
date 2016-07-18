@@ -18,8 +18,10 @@
   "homepage": "https://github.com/fertavora/historial-cai-api#readme",
   "dependencies": {
     "body-parser": "^1.15.0",
+    "chai": "^3.5.0",
     "express": "^4.13.4",
     "mysql": "^2.10.2",
+    "superagent": "^2.0.0",
     "winston": "^2.2.0"
   }
 }
