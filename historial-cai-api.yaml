@@ -1,0 +1,124 @@
+# YAML scpecification for API docs
+swagger: '2.0'
+
+# This is your document metadata
+info:
+  version: "2016.1"
+  title: <enter your title>
+
+# Describe your paths here
+paths:
+  # This is a path endpoint. Change it.
+  /torneos:
+    # This is a HTTP operation
+    post:
+      description: tbd
+      parameters:
+      -
+        name: data
+        in: body
+        description: new object
+        required: true
+        schema:
+            $ref: '#/definitions/Torneo'
+      responses:
+        200: 
+          description: Everything ok
+    get:
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets `Person` objects.
+        Optional query param of **size** determines
+        size of returned array
+      # This is array of GET operation parameters:
+      parameters:
+        # An example parameter that is in query and is required
+        -
+          name: size
+          in: query
+          description: Size of array
+          required: true
+          type: number
+          format: double
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            title: ArrayOfTorneos
+            type: array
+            items:
+              $ref: '#/definitions/Torneo'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Error:
+    type: object
+    properties:
+      status:
+        type: number
+      message:
+        type: string
+  Torneo:
+    type: object
+    properties:
+      nombre: 
+        type: string
+      tipo:
+        type: string
+  EdicionTorneo:
+    type: object
+    properties:
+      nombre:
+        type: string
+      torneo:
+        type: string
+      isCurrent: 
+        type: boolean
+  Equipo:
+    type: object
+    properties:
+      nombre:
+        type: string
+      ciudad:
+        type: string
+      provincia:
+        type: string
+      pais: 
+        type: string
+      escudo: 
+        type: string
+  Arbitro:
+    type: object
+    properties:
+      nombre: 
+        type: string
+      apellido:
+        type: string
+      pais:
+        type: string
+      fechaNacimiento:
+        type: string
+        format: date
+  Tecnico:
+    type: object
+    properties:
+      nombre: 
+        type: string
+      apellido:
+        type: string
+      pais:
+        type: string
+      fechaNacimiento:
+        type: string
+        format: date
+      isCurrent:
+        type: boolean
+      
+        
+        
