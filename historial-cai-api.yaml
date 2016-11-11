@@ -4,8 +4,13 @@ swagger: '2.0'
 # This is your document metadata
 info:
   version: "2016.1"
-  title: <enter your title>
+  title: "Historial CAI API"
+  description: "El objetivo de esta API es gestionar el historial de partidos del CAI sin depender de una única aplicación. Esta API podrá ser consultada por cualquier aplicación que lo requiera."
 
+host: "http://localhost/"
+basePath: "/v0"
+produces:
+  - application/json
 # Describe your paths here
 paths:
   # This is a path endpoint. Change it.
