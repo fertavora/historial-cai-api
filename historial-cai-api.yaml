@@ -7,7 +7,7 @@ info:
   title: "Historial CAI API"
   description: "El objetivo de esta API es gestionar el historial de partidos del CAI sin depender de una única aplicación. Esta API podrá ser consultada por cualquier aplicación que lo requiera."
 
-host: "http://localhost/"
+host: "localhost"
 basePath: "/v0"
 produces:
   - application/json
@@ -124,6 +124,38 @@ definitions:
         format: date
       isCurrent:
         type: boolean
-      
-        
-        
+  Jugador:
+    type: object
+    properties:
+      nombre:
+        type: string
+      apellido:
+        type: string
+      pais:
+        type: string
+      fechaNacimiento:
+        type: string
+        format: date
+      posicion:
+        type: string
+  Partido:
+    type: object
+    properties:
+      fechaPartido:
+        type: string
+        format: date
+      EdicionTorneo:
+        $ref: '#/definitions/EdicionTorneo'
+      Equipo:
+        $ref: '#/definitions/Equipo'
+      goles:
+        type: object
+        properties:
+          cai:
+            type: integer
+          rival:
+            type: integer
+      Arbitro:
+        $ref: '#/definitions/Arbitro'
+      Tecnico:
+        $ref: '#/definitions/Tecnico'
