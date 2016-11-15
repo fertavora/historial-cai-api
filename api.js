@@ -8,12 +8,15 @@ var logger = require('./logger');
 var app = express();
 var app_port = 3001;
 var expected_credentials = [process.env.USERNAME || 'historialcai', process.env.PASSWORD || 'ecrM54ulxN'];
+var ResponseMessage = require('./response_message');
 
 var unauthorizedResponse = function(res){
   res.set({
     'WWW-Authenticate': 'Basic realm="Por favor identifíquese"'
   });
-  return res.status(401).send({code: 401, error: "No autorizado"});
+  var rm = new ResponseMessage("401", "Not authorized");
+  // return res.status(401).send({code: 401, error: "No autorizado"});
+  res.status(rm.getStatus()).send(rm.toString());
 };
 
 var authenticateCredentials = function(c){
@@ -44,12 +47,43 @@ var allowCrossDomain = function(req, res, next) {
 
 app.use(allowCrossDomain);
 
-app.get('/equipos', function(req, res){
+app.get('/v0/equipo', function(req, res){
   logger.info("GET /equipos");
   if(req.header('authorization')){
     if(authenticateCredentials(req.header('authorization'))){
       //todo mongo query
-      res.status(200).send("OK");
+      var rm = new ResponseMessage("200", "Falta consultar a Mongo");
+      res.status(rm.getStatus()).send(rm.toString());
+    }else{
+      logger.info('Unauthorized');
+      unauthorizedResponse(res);
+    }
+  }else{
+    logger.info('Unauthorized');
+    unauthorizedResponse(res);
+  }
+});
+
+app.post('/v0/equipo', function(req, res){
+  logger.info('POST /equipos');
+  if(req.header('authorization')){
+    if(authenticateCredentials(req.header('authorization'))){
+      //verificar schema de req.body
+      var expectedSchema = require('./schemas/equipo');
+      var JaySchema = require('jayschema');
+      var js = new JaySchema();
+      js.validate(req.body, expectedSchema, function(errs){
+        if(errs){
+          logger.error(errs[0].kind, errs[0].desc);
+          var rm = new ResponseMessage("400", "Bad Request");
+          res.status(rm.getStatus()).send(rm.toString());
+        }else{
+          //todo guardar en mongo
+          var rm = new ResponseMessage("200", "Falta guardar en Mongo");
+          res.status(rm.getStatus()).send(rm.toString());
+        }
+      })
+      
     }else{
       logger.info('Unauthorized');
       unauthorizedResponse(res);

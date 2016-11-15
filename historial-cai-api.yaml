@@ -7,10 +7,19 @@ info:
   title: "Historial CAI API"
   description: "El objetivo de esta API es gestionar el historial de partidos del CAI sin depender de una única aplicación. Esta API podrá ser consultada por cualquier aplicación que lo requiera."
 
-host: "localhost"
+host: "localhost:3001"
 basePath: "/v0"
 produces:
   - application/json
+responses:
+  400:
+    description: Bad Request
+    schema:
+      $ref: '#/definitions/Error'
+  401:
+    description: Unauthorized
+    schema:
+      $ref: '#/definitions/Error'
 # Describe your paths here
 paths:
   /equipo:
@@ -18,13 +27,9 @@ paths:
       description: List of Equipos
       responses:
         400:
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/400'
         401:
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/401'
         200:
           description: Response OK
           schema:
@@ -44,13 +49,9 @@ paths:
          $ref: '#/definitions/Equipo' 
       responses:
         400:
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/400'
         401:
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/401'
         200:
           description: Response OK
           schema:
@@ -60,13 +61,9 @@ paths:
       description: List of Torneos
       responses:
         400:
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Error'
-        404:
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/400'
+        401:
+          $ref: '#/responses/401'
         200:
           description: Response OK
           schema:
@@ -86,13 +83,9 @@ paths:
             $ref: '#/definitions/Torneo'
       responses:
         400:
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/400'
         401:
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/401'
         200:
           description: Response ok
           schema:
@@ -102,13 +95,9 @@ paths:
       description: List of EdicionTorneo
       responses:
         400:
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/400'
         401:
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/401'
         200:
           description: Response OK
           schema:
@@ -125,13 +114,40 @@ paths:
             $ref: '#/definitions/EdicionTorneo'
       responses:
         400:
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Error'
+          $ref: '#/responses/400'
         401:
-          description: Unauthorized
+          $ref: '#/responses/401'
+        200:
+          description: Response ok
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/OK'
+  /arbitro:
+    get:
+      description: List of Arbitro
+      responses:
+        400:
+          $ref: '#/responses/400'
+        401:
+          $ref: '#/responses/401'
+        200:
+          description: Response OK
+          schema:
+            $ref: '#/definitions/OK'
+    post:
+      description: Save a new Arbitro
+      parameters:
+      -
+        name: data
+        in: body
+        description: new Arbitro
+        required: true
+        schema:
+            $ref: '#/definitions/Arbitro'
+      responses:
+        400:
+          $ref: '#/responses/400'
+        401:
+          $ref: '#/responses/401'
         200:
           description: Response ok
           schema:
@@ -169,6 +185,7 @@ definitions:
         type: boolean
   Equipo:
     type: object
+    required: [nombre, pais]
     properties:
       nombre:
         type: string
