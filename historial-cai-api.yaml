@@ -13,9 +13,9 @@ produces:
   - application/json
 # Describe your paths here
 paths:
-  /equipos:
+  /equipo:
     get:
-      description: Listado de equipos
+      description: List of Equipos
       responses:
         400:
           description: Bad Request
@@ -32,56 +32,110 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Equipo'
-  # This is a path endpoint. Change it.
-  /torneos:
-    # This is a HTTP operation
     post:
-      description: tbd
+      description: Save a new equipo
       parameters:
       -
         name: data
         in: body
-        description: new object
+        description: New Equipo 
         required: true
         schema:
-            $ref: '#/definitions/Torneo'
+         $ref: '#/definitions/Equipo' 
       responses:
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
         200:
-          description: Everything ok
+          description: Response OK
           schema:
             $ref: '#/definitions/OK'
+  /torneo:
     get:
-      # Describe this verb here. Note: you can use markdown
-      description: |
-        Gets `Person` objects.
-        Optional query param of **size** determines
-        size of returned array
-      # This is array of GET operation parameters:
-      parameters:
-        # An example parameter that is in query and is required
-        -
-          name: size
-          in: query
-          description: Size of array
-          required: true
-          type: number
-          format: double
-      # Expected responses for this operation:
+      description: List of Torneos
       responses:
-        # Response code
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
         200:
-          description: Successful response
-          # A schema describing your response object.
-          # Use JSON Schema format
+          description: Response OK
           schema:
             title: ArrayOfTorneos
             type: array
             items:
               $ref: '#/definitions/Torneo'
+    post:
+      description: Save a new Torneo
+      parameters:
+      -
+        name: data
+        in: body
+        description: new Torneo
+        required: true
+        schema:
+            $ref: '#/definitions/Torneo'
+      responses:
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
         401:
           description: Unauthorized
           schema:
             $ref: '#/definitions/Error'
+        200:
+          description: Response ok
+          schema:
+            $ref: '#/definitions/OK'
+  /ediciontorneo:
+    get:
+      description: List of EdicionTorneo
+      responses:
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        200:
+          description: Response OK
+          schema:
+            $ref: '#/definitions/OK'
+    post:
+      description: Save a new EdicionTorneo
+      parameters:
+      -
+        name: data
+        in: body
+        description: new EdicionTorneo
+        required: true
+        schema:
+            $ref: '#/definitions/EdicionTorneo'
+      responses:
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        200:
+          description: Response ok
+          schema:
+            $ref: '#/definitions/OK'
 definitions:
   OK:
     type: object
@@ -138,6 +192,8 @@ definitions:
       fechaNacimiento:
         type: string
         format: date
+      isRetired:
+        type: boolean
   Tecnico:
     type: object
     properties:
@@ -166,6 +222,8 @@ definitions:
         format: date
       posicion:
         type: string
+      isRetired:
+        type: boolean
   Partido:
     type: object
     properties:
