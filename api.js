@@ -48,7 +48,7 @@ var allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain);
 
 app.get('/v0/equipo', function(req, res){
-  logger.info("GET /equipos");
+  logger.info("GET /equipo");
   if(req.header('authorization')){
     if(authenticateCredentials(req.header('authorization'))){
       //todo mongo query
@@ -65,11 +65,105 @@ app.get('/v0/equipo', function(req, res){
 });
 
 app.post('/v0/equipo', function(req, res){
-  logger.info('POST /equipos');
+  logger.info('POST /equipo');
   if(req.header('authorization')){
     if(authenticateCredentials(req.header('authorization'))){
       //verificar schema de req.body
       var expectedSchema = require('./schemas/equipo');
+      var JaySchema = require('jayschema');
+      var js = new JaySchema();
+      js.validate(req.body, expectedSchema, function(errs){
+        if(errs){
+          logger.error(errs[0].kind, errs[0].desc);
+          var rm = new ResponseMessage("400", "Bad Request");
+          res.status(rm.getStatus()).send(rm.toString());
+        }else{
+          //todo guardar en mongo
+          var rm = new ResponseMessage("200", "Falta guardar en Mongo");
+          res.status(rm.getStatus()).send(rm.toString());
+        }
+      })
+      
+    }else{
+      logger.info('Unauthorized');
+      unauthorizedResponse(res);
+    }
+  }else{
+    logger.info('Unauthorized');
+    unauthorizedResponse(res);
+  }
+});
+
+app.get('/v0/torneo', function(req, res){
+  logger.info('GET /torneo');
+  if(req.header('authorization')){
+    if(authenticateCredentials(req.header('authorization'))){
+      //todo mongo query
+      var rm = new ResponseMessage("200", "Falta consultar a Mongo");
+      res.status(rm.getStatus()).send(rm.toString());
+    }else{
+      logger.info('Unauthorized');
+      unauthorizedResponse(res);
+    }
+  }else{
+    logger.info('Unauthorized');
+    unauthorizedResponse(res);
+  }
+});
+
+app.post('/v0/torneo', function(req, res){
+  logger.info('POST /torneo');
+  if(req.header('authorization')){
+    if(authenticateCredentials(req.header('authorization'))){
+      //verificar schema de req.body
+      var expectedSchema = require('./schemas/torneo');
+      var JaySchema = require('jayschema');
+      var js = new JaySchema();
+      js.validate(req.body, expectedSchema, function(errs){
+        if(errs){
+          logger.error(errs[0].kind, errs[0].desc);
+          var rm = new ResponseMessage("400", "Bad Request");
+          res.status(rm.getStatus()).send(rm.toString());
+        }else{
+          //todo guardar en mongo
+          var rm = new ResponseMessage("200", "Falta guardar en Mongo");
+          res.status(rm.getStatus()).send(rm.toString());
+        }
+      })
+      
+    }else{
+      logger.info('Unauthorized');
+      unauthorizedResponse(res);
+    }
+  }else{
+    logger.info('Unauthorized');
+    unauthorizedResponse(res);
+  }
+});
+
+app.get('/v0/ediciontorneo', function(req, res){
+  logger.info('GET /ediciontorneo');
+  if(req.header('authorization')){
+    if(authenticateCredentials(req.header('authorization'))){
+      //todo mongo query
+      var rm = new ResponseMessage("200", "Falta consultar a Mongo");
+      res.status(rm.getStatus()).send(rm.toString());
+    }else{
+      logger.info('Unauthorized');
+      unauthorizedResponse(res);
+    }
+  }else{
+    logger.info('Unauthorized');
+    unauthorizedResponse(res);
+  }
+});
+
+app.post('/v0/ediciontorneo', function(req, res){
+  logger.info('POST /ediciontorneo');
+  if(req.header('authorization')){
+    if(authenticateCredentials(req.header('authorization'))){
+      //verificar schema de req.body
+      var expectedSchema = require('./schemas/ediciontorneo');
       var JaySchema = require('jayschema');
       var js = new JaySchema();
       js.validate(req.body, expectedSchema, function(errs){
