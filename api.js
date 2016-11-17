@@ -188,4 +188,51 @@ app.post('/v0/ediciontorneo', function(req, res){
   }
 });
 
+app.get('/v0/arbitro', function(req, res){
+  logger.info('GET /arbitro');
+  if(req.header('authorization')){
+    if(authenticateCredentials(req.header('authorization'))){
+      //todo mongo query
+      var rm = new ResponseMessage("200", "Falta consultar a Mongo");
+      res.status(rm.getStatus()).send(rm.toString());
+    }else{
+      logger.info('Unauthorized');
+      unauthorizedResponse(res);
+    }
+  }else{
+    logger.info('Unauthorized');
+    unauthorizedResponse(res);
+  }
+});
+
+app.post('/v0/arbitro', function(req, res){
+  logger.info('POST /arbitro');
+  if(req.header('authorization')){
+    if(authenticateCredentials(req.header('authorization'))){
+      //verificar schema de req.body
+      var expectedSchema = require('./schemas/arbitro');
+      var JaySchema = require('jayschema');
+      var js = new JaySchema();
+      js.validate(req.body, expectedSchema, function(errs){
+        if(errs){
+          logger.error(errs[0].kind, errs[0].desc);
+          var rm = new ResponseMessage("400", "Bad Request");
+          res.status(rm.getStatus()).send(rm.toString());
+        }else{
+          //todo guardar en mongo
+          var rm = new ResponseMessage("200", "Falta guardar en Mongo");
+          res.status(rm.getStatus()).send(rm.toString());
+        }
+      })
+      
+    }else{
+      logger.info('Unauthorized');
+      unauthorizedResponse(res);
+    }
+  }else{
+    logger.info('Unauthorized');
+    unauthorizedResponse(res);
+  }
+});
+
 app.listen(process.env.PORT || app_port); //process.env.PORT is to have the app working on heroku
