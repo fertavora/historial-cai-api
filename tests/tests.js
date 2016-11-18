@@ -9,25 +9,21 @@ var assert = require('chai').assert;
 
 describe('Historial CAI API - GET methods', function(){
   var url = 'http://localhost:3001/v0';
-  var requestError = function(err, done){
-    assert.fail(false, true, "Request had error! >>> " + err.response.statusCode + ' : ' + err.message);
-    done();
-  }
 
   var checkStatus200 = function(res){
     assert(res.headers.statusCode = '200', "Response is not 200");
-  }
+  };
 
   it.only('/equipos', function(done){
     request
-      .get(url+'/api/equipos')
-      .set('Authorization', 'Basic 7809caf6b7a050635bba9e72453bad47')
+      .get(url+'/equipos')
+      .set('Authorization', 'Basic aGlzdG9yaWFsY2FpOmVjck01NHVseE4=')
       .end(function(err, res){
-        if(err) requestError(err, done);
+        if(err) done(new Error(err));
         assert(res.body.length > 0, "Response length is not greater than 0");
         checkStatus200(res);
         done();
-      })
+      });
   });
 
   it('/api/arbitros', function(done){

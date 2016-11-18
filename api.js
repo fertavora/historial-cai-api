@@ -1,7 +1,6 @@
 /**
  * Created by tavete on 4/28/16.
  */
-
 var express = require('express');
 var bodyParser = require('body-parser');
 var logger = require('./logger');
@@ -9,6 +8,8 @@ var app = express();
 var app_port = 3001;
 var expected_credentials = [process.env.USERNAME || 'historialcai', process.env.PASSWORD || 'ecrM54ulxN'];
 var ResponseMessage = require('./response_message');
+var mongo_connection_string = process.env.MONGO_CONNECTION_STRING || 'mongodb://localhost:27017/historial-cai-dev';
+var mongoHelper = require('./mongo-helper');
 
 var unauthorizedResponse = function(res){
   res.set({
@@ -51,9 +52,13 @@ app.get('/v0/equipo', function(req, res){
   logger.info("GET /equipo");
   if(req.header('authorization')){
     if(authenticateCredentials(req.header('authorization'))){
-      //todo mongo query
-      var rm = new ResponseMessage("200", "Falta consultar a Mongo");
-      res.status(rm.getStatus()).send(rm.toString());
+      mongoHelper.findToArray(mongo_connection_string, 'equipos').then(function(r){
+        var rm = new ResponseMessage("200", r);
+        res.status(rm.getStatus()).send(rm.toString());
+      }, function(err){
+        var rm = new ResponseMessage("500", err);
+        res.status(rm.getStatus()).send(rm.toString());
+      })
     }else{
       logger.info('Unauthorized');
       unauthorizedResponse(res);
@@ -78,11 +83,15 @@ app.post('/v0/equipo', function(req, res){
           var rm = new ResponseMessage("400", "Bad Request");
           res.status(rm.getStatus()).send(rm.toString());
         }else{
-          //todo guardar en mongo
-          var rm = new ResponseMessage("200", "Falta guardar en Mongo");
-          res.status(rm.getStatus()).send(rm.toString());
+          mongoHelper.insertOne(mongo_connection_string, 'equipos', req.body).then(function(r){
+            var rm = new ResponseMessage("200", r);
+            res.status(rm.getStatus()).send(rm.toString());
+          }, function(err){
+            var rm = new ResponseMessage("500", err);
+            res.status(rm.getStatus()).send(rm.toString());
+          });
         }
-      })
+      });
       
     }else{
       logger.info('Unauthorized');
