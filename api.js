@@ -19,16 +19,12 @@ var unauthorizedResponse = function(res){
   // return res.status(401).send({code: 401, error: "No autorizado"});
   res.status(rm.getStatus()).send(rm.toString());
 };
-
 var authenticateCredentials = function(c){
   var auth_string = c.split(' ')[1];
   var decoded = new Buffer(auth_string, 'base64').toString('ascii');
   var credentials = decoded.split(':');
   return (credentials[0] == expected_credentials[0] && credentials[1] == expected_credentials[1]);
 };
-
-app.use(bodyParser.json()); // for parsing application/json
-
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Origin', '*');
@@ -46,6 +42,7 @@ var allowCrossDomain = function(req, res, next) {
     }
 };
 
+app.use(bodyParser.json()); // for parsing application/json
 app.use(allowCrossDomain);
 
 app.get('/v0/equipo', function(req, res){
@@ -107,9 +104,13 @@ app.get('/v0/torneo', function(req, res){
   logger.info('GET /torneo');
   if(req.header('authorization')){
     if(authenticateCredentials(req.header('authorization'))){
-      //todo mongo query
-      var rm = new ResponseMessage("200", "Falta consultar a Mongo");
-      res.status(rm.getStatus()).send(rm.toString());
+        mongoHelper.findToArray(mongo_connection_string, 'torneos').then(function(r){
+            var rm = new ResponseMessage("200", r);
+            res.status(rm.getStatus()).send(rm.toString());
+        }, function(err){
+            var rm = new ResponseMessage("500", err);
+            res.status(rm.getStatus()).send(rm.toString());
+        })
     }else{
       logger.info('Unauthorized');
       unauthorizedResponse(res);
@@ -134,9 +135,13 @@ app.post('/v0/torneo', function(req, res){
           var rm = new ResponseMessage("400", "Bad Request");
           res.status(rm.getStatus()).send(rm.toString());
         }else{
-          //todo guardar en mongo
-          var rm = new ResponseMessage("200", "Falta guardar en Mongo");
-          res.status(rm.getStatus()).send(rm.toString());
+          mongoHelper.insertOne(mongo_connection_string, 'torneos', req.body).then(function(r){
+              var rm = new ResponseMessage("200", r);
+              res.status(rm.getStatus()).send(rm.toString());
+          }, function(err){
+              var rm = new ResponseMessage("500", err);
+              res.status(rm.getStatus()).send(rm.toString());
+          });
         }
       })
       
@@ -154,9 +159,13 @@ app.get('/v0/ediciontorneo', function(req, res){
   logger.info('GET /ediciontorneo');
   if(req.header('authorization')){
     if(authenticateCredentials(req.header('authorization'))){
-      //todo mongo query
-      var rm = new ResponseMessage("200", "Falta consultar a Mongo");
-      res.status(rm.getStatus()).send(rm.toString());
+      mongoHelper.findToArray(mongo_connection_string, 'edicionestorneos').then(function(r){
+        var rm = new ResponseMessage("200", r);
+        res.status(rm.getStatus()).send(rm.toString());
+      }, function(err){
+        var rm = new ResponseMessage("500", err);
+        res.status(rm.getStatus()).send(rm.toString());
+      })
     }else{
       logger.info('Unauthorized');
       unauthorizedResponse(res);
@@ -181,9 +190,13 @@ app.post('/v0/ediciontorneo', function(req, res){
           var rm = new ResponseMessage("400", "Bad Request");
           res.status(rm.getStatus()).send(rm.toString());
         }else{
-          //todo guardar en mongo
-          var rm = new ResponseMessage("200", "Falta guardar en Mongo");
-          res.status(rm.getStatus()).send(rm.toString());
+          mongoHelper.insertOne(mongo_connection_string, 'edicionestorneos', req.body).then(function(r){
+            var rm = new ResponseMessage("200", r);
+            res.status(rm.getStatus()).send(rm.toString());
+          }, function(err){
+            var rm = new ResponseMessage("500", err);
+            res.status(rm.getStatus()).send(rm.toString());
+          });
         }
       })
       
@@ -201,9 +214,13 @@ app.get('/v0/arbitro', function(req, res){
   logger.info('GET /arbitro');
   if(req.header('authorization')){
     if(authenticateCredentials(req.header('authorization'))){
-      //todo mongo query
-      var rm = new ResponseMessage("200", "Falta consultar a Mongo");
-      res.status(rm.getStatus()).send(rm.toString());
+      mongoHelper.findToArray(mongo_connection_string, 'arbitros').then(function(r){
+        var rm = new ResponseMessage("200", r);
+        res.status(rm.getStatus()).send(rm.toString());
+      }, function(err){
+        var rm = new ResponseMessage("500", err);
+        res.status(rm.getStatus()).send(rm.toString());
+      })
     }else{
       logger.info('Unauthorized');
       unauthorizedResponse(res);
@@ -228,9 +245,15 @@ app.post('/v0/arbitro', function(req, res){
           var rm = new ResponseMessage("400", "Bad Request");
           res.status(rm.getStatus()).send(rm.toString());
         }else{
-          //todo guardar en mongo
-          var rm = new ResponseMessage("200", "Falta guardar en Mongo");
-          res.status(rm.getStatus()).send(rm.toString());
+          //todo revisar que no se está guardando como objeto date, hay que paresar a ISODAte?ç
+          req.body.fechaNacimiento = new Date(req.body.fechaNacimiento);
+          mongoHelper.insertOne(mongo_connection_string, 'arbitros', req.body).then(function(r){
+            var rm = new ResponseMessage("200", r);
+            res.status(rm.getStatus()).send(rm.toString());
+          }, function(err){
+            var rm = new ResponseMessage("500", err);
+            res.status(rm.getStatus()).send(rm.toString());
+          });
         }
       })
       
