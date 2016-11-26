@@ -14,17 +14,17 @@ var error400Message = "Access is restricted. Email fernando@tavora.com.ar for fu
 var expAuth = "Basic 7809caf6b7a050635bba9e72453bad47";
 var dbProd = {
   //base de godaddy
-  // host     : 'historicocai.db.8518296.hostedresource.com',
-  // user     : 'historicocai',
-  // password : 'HistoCai!666',
-  // database : 'historicocai'
+  host     : 'historicocai.db.8518296.hostedresource.com',
+  user     : 'historicocai',
+  password : 'HistoCai!666',
+  database : 'historicocai'
 
   //base localhost
   // OJO CON DEPLOYAR A HEROKU!!! ******************
-  host     : 'localhost',
-  user     : 'root',
-  password : 'Joaquin!01',
-  database : 'historicocai'
+  // host     : 'localhost',
+  // user     : 'root',
+  // password : 'Joaquin!01',
+  // database : 'historicocai'
 
 };
 
